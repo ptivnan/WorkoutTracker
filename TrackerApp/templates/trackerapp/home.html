@@ -1,0 +1,55 @@
+{% extends 'trackerapp/base.html'%}
+
+{%block content%}
+<div class="card">
+    <div class="card-header">
+        Create a Workout
+    </div>
+    <div class="card-body">
+        <form action="" method="post">
+            {%csrf_token%}
+            <h5 class="card-title">{{workoutform.name}}</h5>
+            <button class="btn btn-primary" type="submit" name="create-workout">Create Workout</button>
+        </form>
+    </div>
+</div>
+<br>
+<div class="card">
+    <div class="card-body">
+        <form action="" method="post">
+            <ul class="list-group">
+                {% for workout in workouts %}
+                <a href="workout/{{workout.id}}" class="list-group-item list-group-item-action">{{workout.name}}</a>
+                {% endfor %}
+            </ul>
+        </div>
+        </form>
+    </div>
+</div>
+<br>
+<div class="card">
+    <div class="card-header">
+        Create an Exercise
+    </div>
+    <div class="card-body">
+        <form action="" method="post">
+            {%csrf_token%}
+            <h5 class="card-title">{{exerciseform.name}}</h5>
+            <button class="btn btn-primary" type="submit" name="create-exercise">Create Exercise</button>
+        </form>
+    </div>
+</div>
+<br>
+<div class="card">
+    <div class="card-body">
+        <form action="" method="post">
+            <ul class="list-group">
+                {% for exercise in exercises %}
+                <a href="exercise/{{exercise.id}}" class="list-group-item list-group-item-action">{{exercise.name}}</a>
+                {% endfor %}
+            </ul>
+        </div>
+        </form>
+    </div>
+</div>
+{%endblock%}
