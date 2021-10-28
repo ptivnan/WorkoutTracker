@@ -6,6 +6,19 @@ $(document).ready(function() {
         var sib_id = $(this).siblings().get(0).id
         $(this).attr('for', sib_id)
     })
+
+    $()
+
+    $("#id_name").focusout(function() {
+        console.log("Focus out!")
+        $("#form_workout_update").submit()
+
+    })
+    $("#id_notes").focusout(function() {
+        console.log("Focus out!")
+        $("#form_workout_update").submit()
+
+    })
 })
 
 // $('#fail-btn').each(function () {

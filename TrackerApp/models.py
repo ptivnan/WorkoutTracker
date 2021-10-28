@@ -30,7 +30,7 @@ class WorkoutExercise(models.Model):
         return reverse('workout-exercise-detail', kwargs={'id': self.id})
 
 class Set(models.Model):
-    name = models.CharField(max_length=64, blank=True, null=True, default="Set")
+    name = models.CharField(max_length=64, blank=True, null=True)
     workout = models.ForeignKey(Workout, blank=True, null=True, on_delete=models.CASCADE)
     workout_exercise = models.ForeignKey(WorkoutExercise, blank=True, null=True, on_delete=models.CASCADE)
     weight = models.PositiveSmallIntegerField(blank=True, null=True)

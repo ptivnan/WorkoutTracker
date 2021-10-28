@@ -19,6 +19,11 @@ class WorkoutForm(forms.ModelForm):
                     'class': 'form-control'
                 }
             ),
+            'notes': forms.Textarea(
+                attrs={
+                    'class': 'form-control'
+                }
+            )
         }
 
 class ExerciseForm(forms.ModelForm):
