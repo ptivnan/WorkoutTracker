@@ -4,7 +4,7 @@ from . import forms, models
 
 def TrackerHome(request):
     #Vars
-    workouts = models.Workout.objects.all().order_by('date')
+    workouts = models.Workout.objects.filter(complete=False).order_by('-date')
     exercises = models.Exercise.objects.all().order_by('name')
 
     #Forms
@@ -17,7 +17,9 @@ def TrackerHome(request):
             print(f"WorkoutForm valid: ", WorkoutForm.is_valid())
             print(f"WorkoutForm errors: ", WorkoutForm.errors.as_data())
             if WorkoutForm.is_valid():
-                WorkoutForm.save()
+                new_workout = WorkoutForm.save()
+                return redirect(new_workout)
+
         elif 'create-exercise' in request.POST:
             print(f"ExerciseForm valid: ", ExerciseForm.is_valid())
             print(f"ExerviceForm errors: ", ExerciseForm.errors.as_data())
@@ -39,31 +41,30 @@ def WorkoutDetail(request, **kwargs):
     workout = get_object_or_404(models.Workout, id=id)
     workout_exercise_list = models.WorkoutExercise.objects.filter(workout=workout)
     exercise_set_list = models.Set.objects.filter(workout=workout)
-    form = forms.WorkoutForm(request.POST or None, instance=workout)
+    workout_form = forms.WorkoutForm(request.POST or None, instance=workout)
     workout_exercise_form = forms.WorkoutExerciseForm(request.POST or None, initial={'workout': workout})
     workout_exercise_list_form = forms.WorkoutExerciseListForm()
-    #exercise_set = forms.SetForm(request.POST or None, initial={'exercise_set_list': exercise_set_list})
 
     context = {
         'workout': workout,
         'workout_exercise': workout_exercise_form,
         'workout_exercise_list': workout_exercise_list,
         'workout_exercise_list_form': workout_exercise_list_form,
-        #'exercise_set': exercise_set,
         'exercise_set_list': exercise_set_list, 
         'all_sets': models.Set.objects.all(),
-        'form': form, 
-        'id': id
+        'workout_form': workout_form, 
+        'id': id,
     }
 
     if request.method == 'POST':
+        print(request.POST)
         if 'update-workout' in request.POST:
-            print(f"form valid: ", form.is_valid())
-            print(f"Form errors: ", form.errors.as_data())
-            if form.is_valid():
-                form.save()
+            print(f"form valid: ", workout_form.is_valid())
+            print(f"Form errors: ", workout_form.errors.as_data())
+            if workout_form.is_valid():
+                workout_form.save()
                 return redirect(workout)
-        elif 'add-workout-exercise' in request.POST:
+        elif 'exercise' in request.POST:
             print(f"workout_exercise valid: ", workout_exercise_form.is_valid())
             print(f"workout_exercise errors", workout_exercise_form.errors.as_data())
             if workout_exercise_form.is_valid():
@@ -77,6 +78,10 @@ def WorkoutDetail(request, **kwargs):
                 exercise.delete()
                 return redirect(workout)
 
+        elif 'delete-workout' in request.POST:
+            workout.delete()
+            return redirect('tracker-home')
+            
 
     return render(request, 'trackerapp/workout-detail.html', context)
 

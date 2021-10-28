@@ -1,33 +1,28 @@
 {% extends 'trackerapp/base.html'%}
 
 {%block content%}
-<div class="card">
-    <div class="card-header">
-        <h5>Create a Workout</h5>
-    </div>
-    <div class="card-body">
-        <form action="" method="post">
-            {%csrf_token%}
-            <h5 class="card-title">{{workoutform.name}}</h5>
-            <button class="btn btn-primary" type="submit" name="create-workout">Create Workout</button>
-        </form>
+
+<div class="row mb-2">
+    <div class="col-md">
+            <form class="d-grid gap-2" action="" method="post">
+                {%csrf_token%}
+                <button class="btn btn-primary" type="submit" name="create-workout">Log a Workout</button>
+            </form>
     </div>
 </div>
-<br>
-<div class="card">
-    <div class="card-header">
-        <h5>Select a Workout</h5>
-    </div>
-    <div class="card-body">
-        <form action="" method="post">
+<div class="row">
+    <div class="col-md">
+        <form class="d-grid gap-2" action="" method="post">
             <ul class="list-group">
+                <li class="list-group-item"><strong>Incomplete Workouts</strong></li>
                 {% for workout in workouts %}
-                <a href="workout/{{workout.id}}" class="list-group-item list-group-item-action">{{workout.name}}</a>
+                <a href="workout/{{workout.id}}" class="list-group-item list-group-item-action">{{workout.date.date}} | {{workout.name|default_if_none:"Workout"}}</a>
                 {% endfor %}
             </ul>
         </form>
     </div>
 </div>
+
 <br>
 <div class="card">
     <div class="card-header">

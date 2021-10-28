@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import widgets
 from . import models
 
 class WorkoutForm(forms.ModelForm):
@@ -11,7 +12,13 @@ class WorkoutForm(forms.ModelForm):
                     'class': 'btn-check',
                     'id': 'btn-complete'
                 }
-            )
+            ),
+            'name': forms.TextInput(
+                attrs={
+                    'placeholder': "Give your workout a name...",
+                    'class': 'form-control'
+                }
+            ),
         }
 
 class ExerciseForm(forms.ModelForm):
@@ -29,6 +36,11 @@ class WorkoutExerciseForm(forms.ModelForm):
     class Meta:
         model = models.WorkoutExercise
         exclude = ['workout']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['exercise'].widget.attrs.update({'class': 'form-control', 'onchange': 'this.form.submit()'})
+        self.fields['exercise'].empty_label = "Select an exercise..."
 
 class WorkoutExerciseListForm(forms.Form):
     exercise_list = forms.ModelMultipleChoiceField(

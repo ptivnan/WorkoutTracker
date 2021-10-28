@@ -1,20 +1,64 @@
 {% extends 'trackerapp/base.html'%}
 {%block content%}
-<div class="card">
+
+<form class="d-grid gap-2" action="" method="post">
+{%csrf_token%}
+<div class="row mb-2">
+    <div class="col">
+        {{workout_form.name}}
+    </div>
+</div>
+<div class="row mb-2">
     <form action="" method="post">
-        {%csrf_token%}
-        <div class="card-header">
-            {{form.name}}
+        <div class="col">
+            {{workout_exercise.exercise | default_if_none:"Select and exercise"}}
         </div>
-        <div class="card-body">
-            <p>Created {{workout.date}}</p>
-            <form action="" method="post">
-                {{workout_exercise.exercise}}
-                <button class="btn btn-primary" type="submit" name="add-workout-exercise">Add Exercise</button>
-            </form>
-            <br><br>
+</div>
+<div class="accordion" id="exercise-accodion">
+    {% for exercise in workout_exercise_list %}
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading{{exercise.exercise.id}}">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{exercise.id}}" aria-expanded="true" aria-controls="collapse{{exercise.exerciser.id}}">
+        {{exercise.exercise}}
+      </button>
+    </h2>
+    <div id="collapse{{exercise.id}}" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#exercise-accodion">
+      <div class="accordion-body">
+        <form action="" method="post">
+            {%csrf_token%}
+            {{ formset.management_form }}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Weight</th>
+                        <th scope="col">Reps</th>
+                        <th scope="col">Failure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                    {{form.id}}
+                    <tr>
+                        <td>{{form.weight}}</td>
+                        <td>{{form.reps}}</td>
+                        <td>{{form.failure}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+  {%endfor%}
+</div>
+
+</form>
+</div>
+
+
+            <div class="row mb-3">
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-dark"><h4 class="mb-0">Today's Exercises</h4></li>
+                    <li class="list-group-item list-group-item-dark"><h5 class="mb-0">Today's Exercises</h5></li>
                     {% for exercise in workout_exercise_list %}
                     <li class="list-group-item">
                         <form action="" method="post">
@@ -26,18 +70,20 @@
                         </form>
                     </li>
                     {%endfor%}
-                </ul>                
+                </ul> 
+            </div>
+               
             <br>
-            <p>{{form.notes}}</p>
+            <p>{{workout_form.notes}}</p>
 
             <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-                {{form.complete}}
+                {{workout_form.complete}}
                 <label class="btn btn-outline-primary" for="btn-complete">Workout Complete</label>
             </div>
             <br><br>
             <button class="btn btn-primary" type="submit" name="update-workout">Update</button>
+            <button class="btn btn-primary" type="submit" name="delete-workout">Delete</button>
         </div>
-    </form>
     <ul class="list-group">
         {% for set in all_sets %}
         <li class="list-group-item">
@@ -46,7 +92,4 @@
         {%endfor%}
     </ul>
 
-
-
-</div>
 {%endblock%}
