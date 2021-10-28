@@ -52,4 +52,34 @@ class WorkoutExerciseListForm(forms.Form):
         )
     )
 
-SetFormset = forms.inlineformset_factory(models.WorkoutExercise, models.Set, fields=('__all__'), extra=0, can_delete=True )
+SetFormset = forms.inlineformset_factory(models.WorkoutExercise, models.Set, fields=('__all__'), extra=0, can_delete=True)
+WorkoutFormset = forms.inlineformset_factory(
+    models.Workout, 
+    models.Set, 
+    fields=('__all__'), 
+    extra=0, 
+    can_delete=True,
+    widgets = {
+        'weight': forms.NumberInput(
+            attrs = {
+                'class': 'form-control',
+            }
+        ),
+        'reps': forms.NumberInput(
+            attrs = {
+                'class': 'form-control',
+            }
+        ),
+        'failure': forms.CheckboxInput(
+            attrs = {
+                'class': 'btn-check',
+            }
+        ),
+        'name': forms.TextInput(
+            attrs = {
+                'class': 'form-control',
+                'disabled': 'true',
+            }
+        )
+    }
+    )

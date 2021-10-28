@@ -44,6 +44,9 @@ def WorkoutDetail(request, **kwargs):
     workout_form = forms.WorkoutForm(request.POST or None, instance=workout)
     workout_exercise_form = forms.WorkoutExerciseForm(request.POST or None, initial={'workout': workout})
     workout_exercise_list_form = forms.WorkoutExerciseListForm()
+    sets = models.Set.objects.filter(workout=workout)
+    number_of_sets = f"{len(sets) + 1}"
+    formset = forms.WorkoutFormset(request.POST or None, instance=workout, initial=[{'name': number_of_sets, 'workout': workout}])
 
     context = {
         'workout': workout,
@@ -54,6 +57,9 @@ def WorkoutDetail(request, **kwargs):
         'all_sets': models.Set.objects.all(),
         'workout_form': workout_form, 
         'id': id,
+        'formset': formset,
+
+
     }
 
     if request.method == 'POST':
@@ -81,7 +87,28 @@ def WorkoutDetail(request, **kwargs):
         elif 'delete-workout' in request.POST:
             workout.delete()
             return redirect('tracker-home')
-            
+
+        
+        elif 'add-set' in request.POST:
+            print(request.POST)
+            workout_exercise_id = request.POST['workout_exercise']
+            set = models.Set()
+            set.workout = workout
+            set.exercise = models.Exercise.objects.get(id=workout_exercise_id)
+            set.name = number_of_sets
+            set.save()
+
+            return redirect(workout)
+        
+        elif 'update-set' in request.POST:
+            print(formset.data)
+            print(f"Set Form Valid: ", formset.is_valid())
+            print(f"Set Form Errors: ", formset.errors)
+            if formset.is_valid():
+                formset.workout = workout
+                formset.save()
+
+            return redirect(workout)
 
     return render(request, 'trackerapp/workout-detail.html', context)
 

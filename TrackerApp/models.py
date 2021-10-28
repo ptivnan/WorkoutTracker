@@ -35,7 +35,7 @@ class Set(models.Model):
     workout_exercise = models.ForeignKey(WorkoutExercise, blank=True, null=True, on_delete=models.CASCADE)
     weight = models.PositiveSmallIntegerField(blank=True, null=True)
     reps = models.PositiveSmallIntegerField(blank=True, null=True)
-    failure = models.BooleanField(null=True, default=False)
+    failure = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return self.name
