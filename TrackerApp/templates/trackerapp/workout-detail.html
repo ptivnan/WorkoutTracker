@@ -1,22 +1,32 @@
 {% extends 'trackerapp/base.html'%}
 {%block content%}
-
 <form class="d-grid gap-2" action="" method="post" name="form_workout_update" id="form_workout_update">
     {%csrf_token%}
+    <input type="hidden" name="update-workout">
     <input type="hidden" name="update-workout-name">
-    <button class="btn btn-primary" type="submit" name="update-workout">Update Workout</button>
-    <div class="row">
+    <div class="row d-flex">
+        <div class="col-2 pe-0 d-flex flex-column justify-content-center d-grid">
+            <a class="btn btn-outline-primary" href="/">
+                <i class="fas fa-angle-left fa-lg"></i>
+            </a>
+       </div>
         <div class="col">
             {{workout_form.name}}
         </div>
+        <div class="col-2 ps-0 d-flex flex-column justify-content-center d-grid">
+            <button class="btn btn-outline-success" type="submit" name="complete-workout">
+                <i class="fas fa-check fa-lg"></i>
+            </button>
+       </div>
     </div>
 </form>
 <div class="row">
     <form class="d-grid" action="" method="post" name="form_add_exercise">
         {%csrf_token%}
         <input type="hidden" name="add-exercise">
+        {{workout_exercise_form.workout}}
         <div class="col">
-            {{workout_exercise.exercise}}
+            {{workout_exercise_form.exercise}}
         </div>
     </form>
 </div>
@@ -37,9 +47,8 @@
                     <div class="accordion-body">
                         <form action="" method="post">
                             {%csrf_token%}
-                        
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table mb-0">
                                 <thead>
                                     <tr>
                                         <th class="col">Set</th>
@@ -49,31 +58,41 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for form in formset %}
                                     {{ formset.management_form }}
+
+                                    {% for form in formset %}
                                     {%if form.initial.workout_exercise == exercise.id%}
-                                    {{form.id}}
+                                    {{form.name}}
                                     <tr>
-                                        <td>{{form.name|default:"Test"}}</td>
+                                        <td>{{form.name.value}}</td>
                                         <td>{{form.weight}}</td>
                                         <td>{{form.reps}}</td>
                                         <td>{{form.failure}}
-                                            <label class="btn btn-outline-primary" id="fail-btn">Failure</label><br>
+                                            <label class="btn btn-outline-danger" id="fail-btn" for="{{form.failure.auto_id}}">Failure</label><br>
                                         </td>
                                     </tr>
+                                    <input type="hidden" value={{exercise.id}} name="workout_exercise">
                                     {% endif %}
+                                    {{form.id}}
+                                    {{form.workout_exercise}}
                                     {%endfor%}
                                 </tbody>
                             </table>
                         </div>
-                        <input type="hidden" value={{form.id}} name="update-set">
-                        <button class="btn btn-primary" type="submit" name="update-set-{{form.id}""}>Update Sets</button>
-                        </form>
-                        <form action="" method="post" name="workout_set_form-{{exercise.exercise.id}}">
-                            {%csrf_token%}
-                            <input type="hidden" value="{{exercise.id}}" name="add-set">
-                            {{set_form.name}} - {{set_form.workout_exercise.id}} - {{set_form.workout.id}} 
-                            <button class="btn btn-primary" name="add-set-{{exercise.id}}">Add Set</button>
+                        
+                        <div class="row justify-content-center">
+                            <div class="col-4 d-flex justify-content-center">
+                                <form action="" method="post" name="workout_set_form-{{exercise.exercise.id}}">
+                                    {%csrf_token%}
+                                    <input type="hidden" value="{{exercise.id}}" name="add-set">
+                                    <button class="btn btn-link" name="add-set-{{exercise.id}}"><i class="fas fa-plus fa-2x"></i></button>
+                                </form>
+                            </div>
+                          </div>
+                        
+                        <br>
+                        <input type="hidden" name="update-set">
+                        <button class="btn btn-primary" type="submit" name="update-set-{{exercise.id}}">Update Sets</button>
                         </form>
                     </div>
                 </div>
@@ -83,7 +102,11 @@
         </div>
     </div>
 </div>
-
+<ul>
+<!--     {%for set in sets%}
+    <li>{{set.id}} - {{set.name}} - {{set.workout}} - {{set.workout_exercise}} - {{set.workout_exercise.workout}}</li>
+    {%endfor%} -->
+</ul>
 <div class="row mb-2">
     <form class="m-0" action="" method="post" name="update-workout-notes">
         <div class="col">
@@ -92,16 +115,16 @@
     </form>
 
 </div>
-<div class="btn-group d-grid gap=2 mb-2" role="group" aria-label="Basic checkbox toggle button group">
-    {{workout_form.complete}}
-    <label class="btn btn-outline-primary" for="btn-complete">Workout Complete</label>
-</div>
-<form class="d-grid gap-2" action="" method="post" name="form_workout_complete">
+
+<form class="d-grid gap-2" action="" method="post" name="form_workout_update" id="form_workout_update">
     {%csrf_token%}
+    <div class="btn-group d-grid gap-2 mb-2" role="group">
+        {{workout_form.complete}}
+        <label class="btn btn-outline-primary" for="complete" data-toggle="button" aria-pressed="false">Workout Complete</label>
+        
+    </div>
     <input type="hidden" name="delete-workout" id="delete-workout">
-    <button class="btn btn-outline-danger" type="submit" name="delete-workout">Delete Workout</button>
+    <button class="btn btn-danger" type="submit" name="delete-workout">Delete Workout</button>
 </form>
-
-
 
 {%endblock%}

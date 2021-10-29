@@ -51,15 +51,15 @@ def WorkoutDetail(request, **kwargs):
     formset = forms.WorkoutFormset(request.POST or None, instance=workout, initial=[{'name': "test", 'workout': workout}])
     set_form = forms.SetForm(request.POST or None, initial={'workout': workout})
     #print(workout_exercise_set_count)
-    print(number_of_sets)
     #print(models.Set.objects.filter(workout=workout).count())
-
+    print(f"Workout ID: ", workout.id)
     #print(workout['sets'] for workout in workout_exercise_set_count)
+    print(F"WorkoutExercise instances Associted with this Workout: ", workout_exercise_list)
 
 
     context = {
         'workout': workout,
-        'workout_exercise': workout_exercise_form,
+        'workout_exercise_form': workout_exercise_form,
         'workout_exercise_list': workout_exercise_list,
         'workout_exercise_list_form': workout_exercise_list_form,
         'exercise_set_list': exercise_set_list, 
@@ -69,12 +69,16 @@ def WorkoutDetail(request, **kwargs):
         'formset': formset,
         'set_form': set_form,
         'workout_exercise_set_count': workout_exercise_set_count,
+        'sets': sets
 
     }
 
     if request.method == 'POST':
+        print(f"Request Method: Post")
+        print(request.POST)
 
         if 'update-workout' in request.POST:
+            print(f"Update submitted")
             print(f"form valid: ", workout_form.is_valid())
             print(f"Form errors: ", workout_form.errors.as_data())
             if workout_form.is_valid():
@@ -108,8 +112,10 @@ def WorkoutDetail(request, **kwargs):
             exercise_id = request.POST['add-set']
             print(exercise_id)
             workout_exercise = models.WorkoutExercise.objects.get(id=exercise_id)
+            print(workout_exercise)
             workout_sets = models.Set.objects.filter(workout_exercise=workout_exercise)
             number_of_sets = f"{len(workout_sets) + 1}"
+            print(number_of_sets)
             set = models.Set(workout=workout, workout_exercise=workout_exercise, name=number_of_sets)
             set.save()
             return redirect(workout)
@@ -121,10 +127,14 @@ def WorkoutDetail(request, **kwargs):
             print(f"Set Form Errors: ", formset.errors)
             if formset.is_valid():
                 exercise_id = request.POST['workout_exercise']
-                set = formset.save(commit=False)
-                set.workout = workout
-                set.exercise = models.WorkoutExercise.objects.get(id=exercise_id)
-                set.save()
+                for form in formset:
+                    form.workout = workout
+                    form.workout_exercise = models.WorkoutExercise.objects.get(id=exercise_id)
+                #set = formset.save(commit=False)
+                #set.workout = workout
+                #set.exercise = models.WorkoutExercise.objects.get(id=exercise_id)
+                print(f"Saving...")
+                formset.save()
 
             return redirect(workout)
 

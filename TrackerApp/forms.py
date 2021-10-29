@@ -10,13 +10,13 @@ class WorkoutForm(forms.ModelForm):
             'complete': forms.CheckboxInput(
                 attrs= {
                     'class': 'btn-check',
-                    'id': 'btn-complete'
+                    'id': 'complete'
                 }
             ),
             'name': forms.TextInput(
                 attrs={
                     'placeholder': "Give your workout a name...",
-                    'class': 'form-control'
+                    'class': 'form-control text-center'
                 }
             ),
             'notes': forms.Textarea(
@@ -40,12 +40,19 @@ class SetForm(forms.ModelForm):
 class WorkoutExerciseForm(forms.ModelForm):
     class Meta:
         model = models.WorkoutExercise
-        exclude = ['workout']
+        fields = '__all__'
+        widgets = {
+            'workout': forms.HiddenInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            )
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['exercise'].widget.attrs.update({'class': 'form-control', 'onchange': 'this.form.submit()'})
-        self.fields['exercise'].empty_label = "Select an exercise..."
+        self.fields['exercise'].empty_label = "Add an exercise..."
 
 class WorkoutExerciseListForm(forms.Form):
     exercise_list = forms.ModelMultipleChoiceField(
@@ -67,12 +74,12 @@ WorkoutFormset = forms.inlineformset_factory(
     widgets = {
         'weight': forms.NumberInput(
             attrs = {
-                'class': 'form-control',
+                'class': 'form-control text-center',
             }
         ),
         'reps': forms.NumberInput(
             attrs = {
-                'class': 'form-control',
+                'class': 'form-control text-center',
             }
         ),
         'failure': forms.CheckboxInput(
@@ -83,7 +90,17 @@ WorkoutFormset = forms.inlineformset_factory(
         'name': forms.TextInput(
             attrs = {
                 'class': 'form-control',
-                'disabled': 'true',
+                'hidden': 'true',
+            }
+        ),
+        'id': forms.HiddenInput(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+        'workout_exercise': forms.HiddenInput(
+            attrs={
+            'class': 'form-control'
             }
         )
     }

@@ -8,12 +8,13 @@ class Workout(models.Model):
     notes = models.TextField(blank=True, null=True)
     complete = models.BooleanField(null=False, default=False)
 
+    def __str__(self):
+        return str(self.name)
 
     def get_absolute_url(self):
         return reverse('workout-detail', kwargs={'id': self.id})
 
-    def __str__(self):
-        return self.name
+
 
 
 class Exercise(models.Model):
@@ -29,13 +30,16 @@ class WorkoutExercise(models.Model):
     def get_absolute_url(self):
         return reverse('workout-exercise-detail', kwargs={'id': self.id})
 
+    def __str__(self):
+        return str(self.id)
+
 class Set(models.Model):
     name = models.CharField(max_length=64, blank=True, null=True)
     workout = models.ForeignKey(Workout, blank=True, null=True, on_delete=models.CASCADE)
-    workout_exercise = models.ForeignKey(WorkoutExercise, blank=True, null=True, on_delete=models.CASCADE)
+    workout_exercise = models.ForeignKey(WorkoutExercise, on_delete=models.CASCADE)
     weight = models.PositiveSmallIntegerField(blank=True, null=True)
     reps = models.PositiveSmallIntegerField(blank=True, null=True)
     failure = models.BooleanField(null=False, default=False)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
