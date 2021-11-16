@@ -48,6 +48,7 @@
                     <div class="accordion-body">
                         <form action="" method="post" name="form-update-sets-{{exercise.id}}" id="form-update-sets-{{exercise.id}}">
                             {%csrf_token%}
+                            {{ formset.management_form }}
                             <div class="table-responsive">
                                 <table class="table mb-0">
                                     <thead>
@@ -58,9 +59,7 @@
                                             <th scope="col">Failure</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {{ formset.management_form }}
-
+                                    <tbody id="set-list-{{exercise.id}}" name="set-list-{{exercise.id}}">
                                         {% for form in formset %}
                                         {%if form.initial.workout_exercise == exercise.id%}
                                         {{form.name}}
@@ -87,7 +86,7 @@
                             <div class="col-4 d-flex justify-content-center">
                                 <form action="" method="post" name="workout_set_form-{{exercise.exercise.id}}">
                                     {%csrf_token%}
-                                    <input type="hidden" value="{{exercise.id}}" name="add-set">
+                                    <input type="hidden" value="{{exercise.id}}" name="add-set" id="add-set">
                                     <button class="btn btn-link" name="add-set-{{exercise.id}}"><i
                                             class="fas fa-plus fa-2x"></i></button>
                                 </form>
